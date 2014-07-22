@@ -44,3 +44,34 @@ libraryDependencies ++= Seq(
 mainClass in (Compile, run) := Some( "funl.json.JSONReaderTest" )
 
 //offline := true
+
+publishMavenStyle := true
+
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+}
+
+publishArtifact in Test := false
+
+pomIncludeRepository := { _ => false }
+
+licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
+
+homepage := Some(url("https://github.com/FunL/json"))
+
+pomExtra := (
+  <scm>
+    <url>git@github.com:FunL/funl.git</url>
+    <connection>scm:git:git@github.com:FunL/json.git</connection>
+  </scm>
+  <developers>
+    <developer>
+      <id>edadma</id>
+      <name>Edward A. Maxedon, Sr.</name>
+      <url>http://funl-lang.org</url>
+    </developer>
+  </developers>)
