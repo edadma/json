@@ -1,14 +1,16 @@
 package funl.json
 
+import java.io.File
 import collection.mutable.ListBuffer
-import util.parsing.input.{Reader, CharSequenceReader}
+import collection.immutable.PagedSeq
+import util.parsing.input.{Reader, CharSequenceReader, PagedSeqReader}
 
 
 object JSONReader extends App
 {
-	def apply( s: String ): Map[String, Any] = JSONReader( new CharSequenceReader(s) )
+	def fromString( s: String ): Map[String, Any] = fromReader( new CharSequenceReader(s) )
 	
-	def apply( r: CharSequenceReader ): Map[String, Any] =
+	def fromReader( r: Reader[Char] ): Map[String, Any] =
 	{
 	val (rest, obj) = dictionary( space(r) )
 	val r1 = skipSpace( rest )
@@ -17,6 +19,10 @@ object JSONReader extends App
 
 		obj
 	}
+
+	def fromFile( s: String ) = fromReader( new PagedSeqReader(PagedSeq.fromFile(s)) )
+
+	def fromFile( s: File ) = fromReader( new PagedSeqReader(PagedSeq.fromFile(s)) )
 	
 	def error( msg: String, r: Reader[Char] ): Nothing = sys.error( msg + " at " + r.pos + "\n" + r.pos.longString )
 	
