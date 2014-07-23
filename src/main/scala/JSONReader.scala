@@ -13,7 +13,7 @@ import collection.immutable.PagedSeq
 import util.parsing.input.{Reader, CharSequenceReader, PagedSeqReader}
 
 
-object JSONReader extends App
+object JSONReader
 {
 	def fromString( s: String ): Map[String, Any] = fromReader( new CharSequenceReader(s) )
 	

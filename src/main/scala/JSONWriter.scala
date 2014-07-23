@@ -7,7 +7,7 @@
 
 package funl.json
 
-import java.io.{PrintWriter, File}
+import java.io.{PrintStream, File}
 
 import collection.Map
 
