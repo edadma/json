@@ -1,6 +1,6 @@
 {
 	"string0": "",
-	"string": "asdf",
+	"string": "as\tdf",
 	"number": 123,
 	"array0": [],
 	"array1": [1],
