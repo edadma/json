@@ -114,10 +114,11 @@ object JSONReader
 			case _ => error( "failed to match JSON value", r )
 		}
 
+	private val NUMBER = """-?(?:0|[1-9]\d*)(?:\.\d*)?(?:(?:e|E)(?:\+|-|)\d+)?""".r.pattern
+		
 	def number( r: Reader[Char] ): (Reader[Char], Number) =
 	{
 	val buf = new StringBuilder
-	val NUMBER = """-?(?:0|[1-9]\d*)(?:\.\d*)?(?:(?:e|E)(?:\+|-|)\d+)?""".r.pattern
 		
 		def read( r: Reader[Char] ): Reader[Char] =
 			if (!r.atEnd && "+-0123456789eE".indexOf( r.first ) > -1)

@@ -56,11 +56,38 @@ class JSONWriter( indent: Int )
 					print( '"' )
 				}
 			
-				def writeValue( level: Int, v: Any ) =
+				def writeValue( level: Int, v: Any ): Unit =
 					v match
 					{
 						case s: String => writeString( s )
 						case m: Map[String, Any] => writeMap( level, m )
+						case s: Seq[Any] =>
+							val l = s.toList
+							
+							if (l isEmpty)
+								print( "[]" )
+							else
+							{
+								println( '[' )
+								
+								def members( l: List[Any] ): Unit =
+									l match
+									{
+										case e :: Nil =>
+											scope( level + 1 )
+											writeValue( level + 1, e )
+											println()
+										case e :: tail =>
+											scope( level + 1 )
+											writeValue( level + 1, e )
+											println( ',' )
+											members( tail )
+									}
+								
+								members( l )
+								scope( level )
+								print( ']' )
+							}
 						case _ => print( v )
 					}
 			
