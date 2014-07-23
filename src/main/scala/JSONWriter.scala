@@ -12,6 +12,19 @@ import java.io.{PrintStream, File}
 import collection.Map
 
 
+object JSONWriter
+{
+	private val default = new JSONWriter( 2 )
+	
+	def write( m: Map[String, Any], file: File ) = default.write( m, file )
+	
+	def write( m: Map[String, Any], file: String ) = default.write( m, file )
+	
+	def write( m: Map[String, Any], out: PrintStream ) = default.write( m, out )
+	
+	def write( m: Map[String, Any] ) = default.write( m)
+}
+
 class JSONWriter( indent: Int )
 {
 	def write( m: Map[String, Any], file: File )

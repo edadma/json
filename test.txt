@@ -5,6 +5,7 @@
 	"array0": [],
 	"array1": [1],
 	"array2": [1, "two"],
+	"array3": [{"three": 3, "four": 4}, "asdf"],
 	"object0": {},
 	"object1": {"negative": -1},
 	"object2": {"one": 1, "two": 2}
