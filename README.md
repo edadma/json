@@ -1,3 +1,3 @@
-Easy, Fast JSON Reader for Scala
-================================
+Easy, Fast JSON for Scala
+=========================
 
