@@ -13,7 +13,20 @@ import collection.immutable.PagedSeq
 import util.parsing.input.{Reader, CharSequenceReader, PagedSeqReader}
 
 
-object JSONReader
+object DefaultJSONReader
+{
+	private val default = new JSONReader
+	
+	def fromString( s: String ) = default.fromString( s )
+	
+	def fromReader( r: Reader[Char] ) = default.fromReader( r )
+
+	def fromFile( s: String ) = default.fromFile( s )
+
+	def fromFile( s: File ) = default.fromFile( s )
+}
+
+class JSONReader
 {
 	def fromString( s: String ): Map[String, Any] = fromReader( new CharSequenceReader(s) )
 	
