@@ -41,7 +41,7 @@ libraryDependencies ++= Seq(
 	
 //mainClass in (Compile, packageBin) := Some( "myproject.MyMain" )
 
-mainClass in (Compile, run) := Some( "funl.json.JSONReaderTest" )
+mainClass in (Compile, run) := Some( "funl.json.JSONWriterTest" )
 
 //offline := true
 
