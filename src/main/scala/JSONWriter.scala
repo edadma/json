@@ -55,10 +55,10 @@ class JSONWriter( indent: Int )
 	
 	def write( m: Map[String, Any] )
 	{
-		write( m, Console.out )
+		write( m, Console.out, true )
 	}
 
-	def write( m: Map[String, Any], out: OutputStream )
+	def write( m: Map[String, Any], out: OutputStream, nl: Boolean = false )
 	{
 		Console.withOut( new PrintStream(out, true, "UTF-8") )	// force JSON encoding to be UTF-8
 		{
@@ -148,7 +148,10 @@ class JSONWriter( indent: Int )
 			}
 			
 			writeMap( 0, m )
-		}		
+			
+			if (nl)
+				println()
+		}
 	}
 
 	private val escaped = Map( '\\' -> "\\\\", '"' -> "\\\"", '\t' -> "\\t", '\b' -> "\\b", '\f' -> "\\f", '\n' -> "\\n", '\r' -> "\\r", '\b' -> "\\b" )

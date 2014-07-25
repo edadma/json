@@ -26,7 +26,7 @@ object DefaultJSONReader
 	def fromFile( s: File ) = default.fromFile( s )
 }
 
-class JSONReader
+class JSONReader( ints: Boolean = false, bigInts: Boolean = false )
 {
 	def fromString( s: String ): Map[String, Any] = fromReader( new CharSequenceReader(s) )
 	
@@ -46,10 +46,10 @@ class JSONReader
 	
 	def error( msg: String, r: Reader[Char] ): Nothing = sys.error( msg + " at " + r.pos + "\n" + r.pos.longString )
 	
-	def space( r: Reader[Char] ): Reader[Char] =
+	def space( r: Reader[Char], e: String = "unexpected end of input" ): Reader[Char] =
 		skipSpace( r ) match
 		{
-			case rest if rest.atEnd => error( "unexpected end of input", r )
+			case rest if rest.atEnd => error( e, r )
 			case rest => rest
 		}
 	
@@ -75,11 +75,11 @@ class JSONReader
 	def members( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], Map[String, Any]) =
 	{
 	val (r1, map) = pair( r, m )
-	val r2 = space( r1 )
+	val r2 = space( r1, "',' or '}' was expected" )
 		
 		r2.first match
 		{
-			case ',' => members( space(r2.rest), map )
+			case ',' => members( space(r2.rest, "string was expected"), map )
 			case '}' => (r2.rest, map)
 			case _ => error( "expected ',' or '}'", r2 )
 		}
@@ -88,7 +88,7 @@ class JSONReader
 	def pair( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], Map[String, Any]) =
 	{
 	val (r1, k) = string( r )
-	val (r2, v) = value( space(matches(space(r1), ":")) )
+	val (r2, v) = value( space(matches(space(r1, "':' was expected"), ":"), "JSON value was expected") )
 	
 		(r2, m + (k -> v))
 	}
@@ -102,7 +102,7 @@ class JSONReader
 	def elements( r: Reader[Char], buf: ListBuffer[Any] ): (Reader[Char], List[Any]) =
 	{
 	val (r1, v) = value( space(r) )
-	val r2 = space( r1 )
+	val r2 = space( r1, "',' or ']' was expected" )
 	
 		buf += v
 		
@@ -146,8 +146,20 @@ class JSONReader
 	val n = buf.toString
 	
 		if (!NUMBER.matcher( n ).matches) error( "invalid number", r )
-			
-		(r1, n.toDouble)
+		
+		if (n.indexOf( '.' ) > -1 || n.indexOf( 'e' ) > -1 || n.indexOf( 'E' ) > -1)
+			(r1, n.toDouble)
+		else
+		{
+		val num = BigInt( n )
+		
+			if (ints && num.isValidInt)
+				(r1, num.toInt)
+			else if (bigInts)
+				(r1, num)
+			else
+				(r1, n.toDouble)
+		}
 	}
 
 	def string( r: Reader[Char] ): (Reader[Char], String) =
