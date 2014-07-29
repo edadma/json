@@ -2,7 +2,7 @@ name := "JSON"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
@@ -20,9 +20,7 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.3" % "test"
 
 //libraryDependencies += "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
 
-//libraryDependencies += "org.scala-lang" % "scala-swing" % scalaVersion.value
-
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
 
 //libraryDependencies += "org.scaloid" %% "scaloid" % "3.2-8"
 
