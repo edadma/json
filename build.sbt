@@ -63,7 +63,7 @@ homepage := Some(url("https://github.com/FunL/json"))
 
 pomExtra := (
   <scm>
-    <url>git@github.com:FunL/funl.git</url>
+    <url>git@github.com:FunL/json.git</url>
     <connection>scm:git:git@github.com:FunL/json.git</connection>
   </scm>
   <developers>
