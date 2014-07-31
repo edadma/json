@@ -14,7 +14,7 @@ target := file( "/home/ed/target/" + moduleName.value )
 
 resolvers += Resolver.sonatypeRepo( "snapshots" )
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.3" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.0" % "test"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.3" % "test"
 

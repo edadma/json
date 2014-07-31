@@ -134,7 +134,7 @@ class JSONReader( ints: Boolean = false, bigInts: Boolean = false )
 	val buf = new StringBuilder
 		
 		def read( r: Reader[Char] ): Reader[Char] =
-			if (!r.atEnd && "+-0123456789eE".indexOf( r.first ) > -1)
+			if (!r.atEnd && "+-0123456789eE.".indexOf( r.first ) > -1)
 			{
 				buf append r.first
 				read( r.rest )
