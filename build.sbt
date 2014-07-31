@@ -1,6 +1,6 @@
 name := "JSON"
 
-version := "0.1-SNAPSHOT"
+version := "0.1"
 
 scalaVersion := "2.11.2"
 
@@ -9,8 +9,6 @@ scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-lan
 incOptions := incOptions.value.withNameHashing( true )
 
 organization := "org.funl-lang"
-
-target := file( "/home/ed/target/" + moduleName.value )
 
 resolvers += Resolver.sonatypeRepo( "snapshots" )
 
@@ -45,13 +43,14 @@ mainClass in (Compile, run) := Some( "funl.json.JSONTest" )
 
 publishMavenStyle := true
 
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
+publishTo := Some( Resolver.sftp( "Hyperreal Repository", "hyperreal.ca", "/var/www/maven2" ) )
+
+//  val nexus = "https://oss.sonatype.org/"
+//  if (isSnapshot.value)
+//    Some("snapshots" at nexus + "content/repositories/snapshots")
+//  else
+//    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+//}
 
 publishArtifact in Test := false
 
