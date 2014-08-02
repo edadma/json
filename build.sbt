@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
 //	"local" %% "LOCAL_PROJECT" % "0.1"
 	)
-	
+
 //mainClass in (Compile, packageBin) := Some( "myproject.MyMain" )
 
 mainClass in (Compile, run) := Some( "funl.json.JSONTest" )
@@ -43,7 +43,7 @@ mainClass in (Compile, run) := Some( "funl.json.JSONTest" )
 
 publishMavenStyle := true
 
-publishTo := Some( Resolver.sftp( "Hyperreal Repository", "hyperreal.ca", "/var/www/maven2" ) )
+publishTo := Some( Resolver.sftp( "Hyperreal Repository", "hyperreal.ca", "/var/www/hyperreal.ca/html/maven2" ) )
 
 //  val nexus = "https://oss.sonatype.org/"
 //  if (isSnapshot.value)
