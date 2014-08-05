@@ -15,7 +15,7 @@ import util.parsing.input.{Reader, CharSequenceReader, PagedSeqReader}
 
 object DefaultJSONReader
 {
-	private val default = new JSONReader
+	private val default = new JSONReader( Set() )
 	
 	def fromString( s: String ) = default.fromString( s )
 	
@@ -26,8 +26,11 @@ object DefaultJSONReader
 	def fromFile( s: File ) = default.fromFile( s )
 }
 
-class JSONReader( ints: Boolean = false, bigInts: Boolean = false )
+class JSONReader( types: Set[String] )
 {
+	private val ints = types( "ints" )
+	private val bigInts = types( "bigInts" )
+	
 	def fromString( s: String ): Map[String, Any] = fromReader( new CharSequenceReader(s) )
 	
 	def fromReader( r: Reader[Char] ): Map[String, Any] =
