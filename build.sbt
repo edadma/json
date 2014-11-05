@@ -1,8 +1,8 @@
 name := "JSON"
 
-version := "0.2"
+version := "0.3"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.4"
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
@@ -14,28 +14,11 @@ resolvers += Resolver.sonatypeRepo( "snapshots" )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.0" % "test"
 
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.3" % "test"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
 
 //libraryDependencies += "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
-
-//libraryDependencies += "org.scaloid" %% "scaloid" % "3.2-8"
-
-//libraryDependencies += "org.clapper" %% "argot" % "1.0.1"
-
-libraryDependencies ++= Seq(
-//	"org.postgresql" % "postgresql" % "9.2-1004-jdbc4"
-//	"mysql" % "mysql-connector-java" % "5.1.29"
-//	"org.mongodb" %% "casbah" % "2.6.3"
-//	"org.antlr" % "stringtemplate" % "4.0.2"
-	)
-
-libraryDependencies ++= Seq(
-//	"local" %% "LOCAL_PROJECT" % "0.1"
-	)
-
-//mainClass in (Compile, packageBin) := Some( "myproject.MyMain" )
 
 mainClass in (Compile, run) := Some( "funl.json.JSONTest" )
 
@@ -43,7 +26,7 @@ mainClass in (Compile, run) := Some( "funl.json.JSONTest" )
 
 publishMavenStyle := true
 
-publishTo := Some( Resolver.sftp( "Hyperreal Repository", "hyperreal.ca", "/var/www/hyperreal.ca/html/maven2" ) )
+publishTo := Some( Resolver.sftp( "Hyperreal Repository", "hyperreal.ca", "/var/www/hyperreal.ca/maven2" ) )
 
 //  val nexus = "https://oss.sonatype.org/"
 //  if (isSnapshot.value)
