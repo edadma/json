@@ -2,31 +2,34 @@ name := "JSON"
 
 version := "0.3"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.6"
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
 incOptions := incOptions.value.withNameHashing( true )
 
-organization := "org.funl-lang"
+organization := "ca.hyperreal"
 
 resolvers += Resolver.sonatypeRepo( "snapshots" )
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.0" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % "test"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
 
 //libraryDependencies += "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3"
 
-mainClass in (Compile, run) := Some( "funl.json.JSONTest" )
+mainClass in (Compile, run) := Some( "ca.hyperreal.json.JSONTest" )
 
 //offline := true
 
+seq(bintraySettings:_*)
+
+
 publishMavenStyle := true
 
-publishTo := Some( Resolver.sftp( "Hyperreal Repository", "hyperreal.ca", "/var/www/hyperreal.ca/maven2" ) )
+//publishTo := Some( Resolver.sftp( "private", "hyperreal.ca", "/var/www/hyperreal.ca/maven2" ) )
 
 //  val nexus = "https://oss.sonatype.org/"
 //  if (isSnapshot.value)

@@ -1,4 +1,4 @@
-package funl.json
+package ca.hyperreal.json
 
 import java.{lang => jl}
 
@@ -23,10 +23,10 @@ class JSONTest extends FreeSpec with PropertyChecks with Matchers
 	{
 		DefaultJSONWriter.toString( Map("a" -> List(1, 2)) ) shouldBe
 			"""	|{
-					|  "a": [
-					|    1,
-					|    2
-					|  ]
-					|}""".stripMargin
+				|  "a": [
+				|    1,
+				|    2
+				|  ]
+				|}""".stripMargin
 	}
 }
