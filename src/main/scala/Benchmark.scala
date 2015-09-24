@@ -18,7 +18,7 @@ object Benchmark extends App {
 	def time = {
 		val res = (Platform.currentTime - _start).toDouble
 		
-		printf( "%.2fms\n", (Platform.currentTime - _start).toDouble )
+		println( (Platform.currentTime - _start) + "ms" )
 		res
 	}
 	
@@ -28,7 +28,7 @@ object Benchmark extends App {
 		var total = 0.0
 		
 		for (i <- 0 to RUNS) {
-			start( s"$msg ($i)... " )
+			start( s"$msg ($i)...   " )
 			activity
 			
 			val t = time
@@ -37,7 +37,7 @@ object Benchmark extends App {
 				total += t
 		}
 		
-		printf( msg + " average: %.2fms\n\n", total/RUNS )
+		println( s"$msg average: ${(total/RUNS).toInt}ms\n" )
 	}
 	
 	val file = new File( "benchmark.txt" )
@@ -48,7 +48,7 @@ object Benchmark extends App {
 		val out = new PrintWriter( file )
 		
 		for (_ <- 1 to 91582)
-			out.println( """{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false, "h": [{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g":false}],"i":1}""" )
+			out.println( """{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false, "h": [{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true,"g":false}],"i":1}""" )
 			
 		out.close
 	}
