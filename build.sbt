@@ -1,8 +1,8 @@
 name := "JSON"
 
-version := "0.3"
+version := "0.4"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
@@ -20,7 +20,7 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3"
 
-mainClass in (Compile, run) := Some( "ca.hyperreal.json.JSONTest" )
+mainClass in (Compile, run) := Some( "ca.hyperreal.json.Benchmark" )
 
 //offline := true
 

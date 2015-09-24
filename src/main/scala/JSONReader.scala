@@ -224,12 +224,13 @@ class JSONReader( types: Set[String] )
 	
 	def matches( r: Reader[Char], s: String ): Reader[Char] =
 	{
+	val len = s.length
+	
 		def _matches( _r: Reader[Char], index: Int ): Reader[Char] =
-			if (!r.atEnd && r.first ==  s.charAt( index ))
-				if (index + 1 == s.length)
-					_r.rest
-				else
-					_matches( _r.rest, index + 1 )
+			if (index == len)
+				_r
+			else if (!_r.atEnd && _r.first ==  s.charAt( index ))
+				_matches( _r.rest, index + 1 )
 			else
 				error( "failed to match '" + s, r )
 				

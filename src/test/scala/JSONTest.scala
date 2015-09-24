@@ -17,6 +17,9 @@ class JSONTest extends FreeSpec with PropertyChecks with Matchers
 		new JSONReader( Set("ints") ).fromString("""{"a": 123}""")("a") should (be (123) and be (a [jl.Integer]))
 		DefaultJSONReader.fromString("""{"a": [1, 2]}""") shouldBe Map( "a" -> List(1, 2) )
 		DefaultJSONReader.fromString(" \n{ \n} \n") shouldBe Map()
+		DefaultJSONReader.fromString("""{"a": null}""") shouldBe Map( "a" -> null )
+		DefaultJSONReader.fromString("""{"a": true}""") shouldBe Map( "a" -> true )
+		DefaultJSONReader.fromString("""{"a": false}""") shouldBe Map( "a" -> false )
 	}
 	
 	"writing" in
