@@ -1,4 +1,4 @@
-package ca.hyperreal.json
+package xyz.hyperreal.json
 
 import java.io.File
 import collection.mutable.ListBuffer
@@ -19,14 +19,46 @@ object DefaultJSONReader
 	def fromFile( s: File ) = default.fromFile( s )
 }
 
+class JSON( val m: Map[String, Any] ) {
+	
+	def apply( key: String ) = m.apply( key )
+	
+	def get( key: String ) = m.get( key )
+	
+	def getMap( key: String ) = m( key ).asInstanceOf[JSON]
+	
+	def getBoolean( key: String ) = m( key ).asInstanceOf[Boolean]
+	
+	def getDouble( key: String ) = m( key ).asInstanceOf[Number].doubleValue
+	
+	def getInt( key: String ) = m( key ).asInstanceOf[Int]
+
+	def getBigInt( key: String ) = m( key ).asInstanceOf[BigInt]
+	
+	def getString( key: String ) = m( key ).asInstanceOf[String]
+	
+	def getList( key: String ) = m( key ).asInstanceOf[List[Any]]
+	
+	def getBooleanList( key: String ) = m( key ).asInstanceOf[List[Boolean]]
+	
+	def getDoubleList( key: String ) = getList( key ) map (_.asInstanceOf[Number].doubleValue)
+	
+	def getIntList( key: String ) = m( key ).asInstanceOf[List[Int]]
+	
+	def getStringList( key: String ) = m( key ).asInstanceOf[List[String]]
+	
+	def getBigIntList( key: String ) = m( key ).asInstanceOf[List[BigInt]]
+
+}
+
 class JSONReader( types: Set[String] )
 {
 	private val ints = types( "ints" )
 	private val bigInts = types( "bigInts" )
 	
-	def fromString( s: String ): Map[String, Any] = fromReader( new CharSequenceReader(s) )
+	def fromString( s: String ): JSON = fromReader( new CharSequenceReader(s) )
 	
-	def fromReader( r: Reader[Char] ): Map[String, Any] =
+	def fromReader( r: Reader[Char] ): JSON =
 	{
 	val (rest, obj) = dictionary( space(r) )
 	val r1 = skipSpace( rest )
@@ -55,20 +87,20 @@ class JSONReader( types: Set[String] )
 		else
 			r
 
-	def dictionary( r: Reader[Char] ): (Reader[Char], Map[String, Any]) =
+	def dictionary( r: Reader[Char] ): (Reader[Char], JSON) =
 		if (r.first == '{')
 		{
 		val r1 = space( r.rest )
 		
 			if (r1.first == '}')
-				(r1.rest, Map[String, Any]())
+				(r1.rest, new JSON( Map[String, Any]() ))
 			else
 				members( r1, Map[String, Any]() )
 		}
 		else
 			error( "expected '{'", r )
 		
-	def members( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], Map[String, Any]) =
+	def members( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], JSON) =
 	{
 	val (r1, map) = pair( r, m )
 	val r2 = space( r1, "',' or '}' was expected" )
@@ -76,7 +108,7 @@ class JSONReader( types: Set[String] )
 		r2.first match
 		{
 			case ',' => members( space(r2.rest, "string was expected"), map )
-			case '}' => (r2.rest, map)
+			case '}' => (r2.rest, new JSON( map ))
 			case _ => error( "expected ',' or '}'", r2 )
 		}
 	}

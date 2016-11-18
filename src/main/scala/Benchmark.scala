@@ -1,4 +1,4 @@
-package ca.hyperreal.json
+package xyz.hyperreal.json
 
 import compat.Platform
 import io.Source

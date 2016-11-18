@@ -1,42 +1,38 @@
 name := "JSON"
 
-version := "0.4"
+version := "0.5"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.0"
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
 incOptions := incOptions.value.withNameHashing( true )
 
-organization := "ca.hyperreal"
+organization := "xyz.hyperreal"
 
-resolvers += Resolver.sonatypeRepo( "snapshots" )
+//resolvers += Resolver.sonatypeRepo( "snapshots" )
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
+resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
-//libraryDependencies += "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
+libraryDependencies ++= Seq(
+	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
+	"org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
+)
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3"
+libraryDependencies ++= Seq(
+	"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4"
+//	"org.scala-lang.modules" %% "scala-swing" % "2.0.0-M2"
+)
 
-mainClass in (Compile, run) := Some( "ca.hyperreal.json.Benchmark" )
+mainClass in (Compile, run) := Some( "xyz.hyperreal." + name.value.replace('-', '_') + ".Main" )
 
-//offline := true
+mainClass in assembly := Some( "xyz.hyperreal." + name.value.replace('-', '_') + ".Main" )
 
-seq(bintraySettings:_*)
-
+assemblyJarName in assembly := name.value + "-" + version.value + ".jar"
 
 publishMavenStyle := true
-
-//publishTo := Some( Resolver.sftp( "private", "hyperreal.ca", "/var/www/hyperreal.ca/maven2" ) )
-
-//  val nexus = "https://oss.sonatype.org/"
-//  if (isSnapshot.value)
-//    Some("snapshots" at nexus + "content/repositories/snapshots")
-//  else
-//    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-//}
 
 publishArtifact in Test := false
 
@@ -44,17 +40,17 @@ pomIncludeRepository := { _ => false }
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
-homepage := Some(url("https://github.com/FunL/json"))
+homepage := Some(url("https://github.com/edadma/" + name.value))
 
 pomExtra := (
   <scm>
-    <url>git@github.com:FunL/json.git</url>
-    <connection>scm:git:git@github.com:FunL/json.git</connection>
+    <url>git@github.com:edadma/{name.value}.git</url>
+    <connection>scm:git:git@github.com:edadma/{name.value}.git</connection>
   </scm>
   <developers>
     <developer>
       <id>edadma</id>
       <name>Edward A. Maxedon, Sr.</name>
-      <url>http://funl-lang.org</url>
+      <url>https://github.com/edadma</url>
     </developer>
   </developers>)
