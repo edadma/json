@@ -8,7 +8,7 @@ import util.parsing.input.{Reader, CharSequenceReader, PagedSeqReader}
 
 object DefaultJSONReader
 {
-	private val default = new JSONReader( Set() )
+	private val default = new JSONReader
 	
 	def fromString( s: String ) = default.fromString( s )
 	
@@ -49,12 +49,13 @@ class JSON( val m: Map[String, Any] ) {
 	
 	def getBigIntList( key: String ) = m( key ).asInstanceOf[List[BigInt]]
 
+	override def toString = m mkString ("{", ",", "}")
 }
 
-class JSONReader( types: Set[String] )
+class JSONReader( types: Symbol* )
 {
-	private val ints = types( "ints" )
-	private val bigInts = types( "bigInts" )
+	private val ints = types contains 'ints
+	private val bigInts = types contains 'bigInts
 	
 	def fromString( s: String ): JSON = fromReader( new CharSequenceReader(s) )
 	
