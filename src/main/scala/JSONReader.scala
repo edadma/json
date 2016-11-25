@@ -19,11 +19,17 @@ object DefaultJSONReader
 	def fromFile( s: File ) = default.fromFile( s )
 }
 
-class JSON( val m: Map[String, Any] ) {
+class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
 	
-	def apply( key: String ) = m.apply( key )
+//	def apply( key: String ) = m.apply( key )
 	
 	def get( key: String ) = m.get( key )
+	
+	def iterator = m.iterator
+	
+	def +[V1 >: Any]( kv: (String, V1) ) = m + kv
+	
+	def -( key: String ) = m - key
 	
 	def getMap( key: String ) = m( key ).asInstanceOf[JSON]
 	
