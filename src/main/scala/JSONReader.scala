@@ -8,7 +8,7 @@ import util.parsing.input.{Reader, CharSequenceReader, PagedSeqReader}
 
 object DefaultJSONReader
 {
-	private val default = new JSONReader
+	private val default = new JSONReader( 'ints )
 	
 	def fromString( s: String ) = default.fromString( s )
 	
