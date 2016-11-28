@@ -65,8 +65,7 @@ class JSONReader( types: Symbol* )
 	
 	def fromString( s: String ): JSON = fromReader( new CharSequenceReader(s) )
 	
-	def fromReader( r: Reader[Char] ): JSON =
-	{
+	def fromReader( r: Reader[Char] ): JSON = {
 	val (rest, obj) = dictionary( space(r) )
 	val r1 = skipSpace( rest )
 	
@@ -82,8 +81,7 @@ class JSONReader( types: Symbol* )
 	def error( msg: String, r: Reader[Char] ): Nothing = sys.error( msg + " at " + r.pos + "\n" + r.pos.longString )
 	
 	def space( r: Reader[Char], e: String = "unexpected end of input" ): Reader[Char] =
-		skipSpace( r ) match
-		{
+		skipSpace( r ) match {
 			case rest if rest.atEnd => error( e, r )
 			case rest => rest
 		}
@@ -95,8 +93,7 @@ class JSONReader( types: Symbol* )
 			r
 
 	def dictionary( r: Reader[Char] ): (Reader[Char], JSON) =
-		if (r.first == '{')
-		{
+		if (r.first == '{') {
 		val r1 = space( r.rest )
 		
 			if (r1.first == '}')
@@ -107,22 +104,24 @@ class JSONReader( types: Symbol* )
 		else
 			error( "expected '{'", r )
 		
-	def members( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], JSON) =
-	{
+	def members( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], JSON) = {
 	val (r1, map) = pair( r, m )
 	val r2 = space( r1, "',' or '}' was expected" )
 		
-		r2.first match
-		{
+		r2.first match {
 			case ',' => members( space(r2.rest, "string was expected"), map )
 			case '}' => (r2.rest, new JSON( map ))
 			case _ => error( "expected ',' or '}'", r2 )
 		}
 	}
 	
-	def pair( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], Map[String, Any]) =
-	{
-	val (r1, k) = string( r )
+	def pair( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], Map[String, Any]) = {
+	val (r1, k) =
+		if (r.first == '"')
+			string( r )
+		else
+			ident( r )
+			
 	val (r2, v) = value( space(matches(space(r1, "':' was expected"), ":"), "JSON value was expected") )
 	
 		(r2, m + (k -> v))
@@ -134,15 +133,13 @@ class JSONReader( types: Symbol* )
 		else
 			elements( r, new ListBuffer[Any] )
 
-	def elements( r: Reader[Char], buf: ListBuffer[Any] ): (Reader[Char], List[Any]) =
-	{
+	def elements( r: Reader[Char], buf: ListBuffer[Any] ): (Reader[Char], List[Any]) = {
 	val (r1, v) = value( space(r) )
 	val r2 = space( r1, "',' or ']' was expected" )
 	
 		buf += v
 		
-		r2.first match
-		{
+		r2.first match {
 			case ',' => elements( space(r2.rest), buf )
 			case ']' => (r2.rest, buf.toList)
 			case _ => error( "expected ',' or ']'", r2 )
@@ -150,8 +147,7 @@ class JSONReader( types: Symbol* )
 	}
 
 	def value( r: Reader[Char] ): (Reader[Char], Any) =
-		r.first match
-		{
+		r.first match {
 			case '[' => array( space(r.rest) )
 			case '{' => dictionary( r )
  			case '"' => string( r )
@@ -163,14 +159,27 @@ class JSONReader( types: Symbol* )
 		}
 
 	private val NUMBER = """-?(?:0|[1-9]\d*)(?:\.\d*)?(?:(?:e|E)(?:\+|-|)\d+)?""".r.pattern
-		
-	def number( r: Reader[Char] ): (Reader[Char], Number) =
-	{
+	private val IDENT_CHAR = ('0' to '9') ++ ('a' to 'z') ++ ('A' to 'Z') :+ '_' :+ '-' toSet
+	
+	def ident( r: Reader[Char] ): (Reader[Char], String) = {
 	val buf = new StringBuilder
 		
 		def read( r: Reader[Char] ): Reader[Char] =
-			if (!r.atEnd && "+-0123456789eE.".indexOf( r.first ) > -1)
-			{
+			if (!r.atEnd && IDENT_CHAR( r.first )) {
+				buf append r.first
+				read( r.rest )
+			}
+			else
+				r
+		
+		(read( r ), buf.toString)
+	}
+	
+	def number( r: Reader[Char] ): (Reader[Char], Number) = {
+	val buf = new StringBuilder
+		
+		def read( r: Reader[Char] ): Reader[Char] =
+			if (!r.atEnd && "+-0123456789eE.".indexOf( r.first ) > -1) {
 				buf append r.first
 				read( r.rest )
 			}
@@ -184,8 +193,7 @@ class JSONReader( types: Symbol* )
 		
 		if (n.indexOf( '.' ) > -1 || n.indexOf( 'e' ) > -1 || n.indexOf( 'E' ) > -1)
 			(r1, n.toDouble)
-		else
-		{
+		else {
 		val num = BigInt( n )
 		
 			if (ints && num.isValidInt)
@@ -200,8 +208,7 @@ class JSONReader( types: Symbol* )
 	def string( r: Reader[Char] ): (Reader[Char], String) =
 		if (r.first != '"')
 			error( "expected '\"'", r )
-		else
-		{
+		else {
 		val buf = new StringBuilder
 		
 			def read( r: Reader[Char] ): Reader[Char] =
@@ -210,8 +217,7 @@ class JSONReader( types: Symbol* )
 				else if (r.first == '\\')
 					if (r.rest.atEnd)
 						error( "unexpected end of input after escape character", r.rest )
-					else if (r.rest.first == 'u')
-					{
+					else if (r.rest.first == 'u') {
 					var r1 = r.rest.rest
 					val ch = Array[Char]( 4 )
 						
@@ -232,8 +238,7 @@ class JSONReader( types: Symbol* )
 						buf += Integer.parseInt( ch mkString "", 16 ).toChar
 						read( r1 )
 					}
-					else
-					{
+					else {
 						buf +=
 							(r.rest.first match
 							{
@@ -252,8 +257,7 @@ class JSONReader( types: Symbol* )
 					}
 				else if (r.first == '"')
 					r.rest
-				else
-				{
+				else {
 					buf += r.first
 					read( r.rest )
 				}
@@ -261,8 +265,7 @@ class JSONReader( types: Symbol* )
 			(read( r.rest ), buf.toString)
 		}
 	
-	def matches( r: Reader[Char], s: String ): Reader[Char] =
-	{
+	def matches( r: Reader[Char], s: String ): Reader[Char] = {
 	val len = s.length
 	
 		def _matches( _r: Reader[Char], index: Int ): Reader[Char] =
