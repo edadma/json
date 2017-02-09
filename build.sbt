@@ -1,8 +1,10 @@
 name := "json"
 
-version := "0.5"
+version := "0.6"
 
-scalaVersion := "2.12.0"
+scalaVersion := "2.12.1"
+
+crossScalaVersions := Seq( "2.11.8" )
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
