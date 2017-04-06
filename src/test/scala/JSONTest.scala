@@ -21,7 +21,7 @@ class JSONTest extends FreeSpec with PropertyChecks with Matchers
 		DefaultJSONReader.fromString("""{"a": null}""").m shouldBe Map( "a" -> null )
 		DefaultJSONReader.fromString("""{"a": true}""").m shouldBe Map( "a" -> true )
 		DefaultJSONReader.fromString("""{"a": false}""").m shouldBe Map( "a" -> false )
-		DefaultJSONReader.fromString("""{"a": [1]}""").getDoubleList( "a" ).head should (be (1) and be (a [jl.Double]))
+		new JSONReader().fromString("""{"a": [1]}""").getDoubleList( "a" ).head should (be (1) and be (a [jl.Double]))
 	}
 	
 	"writing" in

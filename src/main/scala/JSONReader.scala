@@ -23,7 +23,7 @@ class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
 	
 //	def apply( key: String ) = m.apply( key )
 	
-	def get( key: String ) = m.get( key )
+	def get( key: String ) = m get key
 	
 	def iterator = m.iterator
 	
@@ -43,17 +43,17 @@ class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
 	
 	def getString( key: String ) = m( key ).asInstanceOf[String]
 	
-	def getList( key: String ) = m( key ).asInstanceOf[List[Any]]
+	def getList[T]( key: String ) = m( key ).asInstanceOf[List[T]]
 	
 	def getBooleanList( key: String ) = m( key ).asInstanceOf[List[Boolean]]
 	
-	def getDoubleList( key: String ) = getList( key ) map (_.asInstanceOf[Number].doubleValue)
+	def getDoubleList( key: String ) = getList[Double]( key )
 	
-	def getIntList( key: String ) = m( key ).asInstanceOf[List[Int]]
+	def getIntList( key: String ) = getList[Int]( key )
 	
-	def getStringList( key: String ) = m( key ).asInstanceOf[List[String]]
+	def getStringList( key: String ) = getList[String]( key )
 	
-	def getBigIntList( key: String ) = m( key ).asInstanceOf[List[BigInt]]
+	def getBigIntList( key: String ) = getList[BigInt]( key )
 
 	override def toString = m mkString ("{", ",", "}")
 }
