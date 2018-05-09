@@ -5,8 +5,7 @@ import java.io.{FileOutputStream, OutputStream, PrintStream, File, ByteArrayOutp
 import collection.Map
 
 
-object DefaultJSONWriter
-{
+object DefaultJSONWriter {
 	private val default = new JSONWriter( 2 )
 	
 	def toString( m: Map[String, Any] ) = default.toString( m )
@@ -20,56 +19,45 @@ object DefaultJSONWriter
 	def write( m: Map[String, Any] ) = default.write( m )
 }
 
-class JSONWriter( indent: Int )
-{
-	def toString( m: Map[String, Any] ) =
-	{
-	val bytes = new ByteArrayOutputStream
+class JSONWriter( indent: Int ) {
+	def toString( m: Map[String, Any] ) = {
+	  val bytes = new ByteArrayOutputStream
 	
 		write( m, bytes )
 		new String( bytes.toByteArray, "UTF-8" )
 	}
 	
-	def write( m: Map[String, Any], file: File )
-	{
-	val out = new FileOutputStream( file )
+	def write( m: Map[String, Any], file: File ) {
+	  val out = new FileOutputStream( file )
 	
 		write( m, out )
 		out.close
 	}
 	
-	def write( m: Map[String, Any], file: String )
-	{
-	val out = new FileOutputStream( file )
+	def write( m: Map[String, Any], file: String ){
+	  val out = new FileOutputStream( file )
 	
 		write( m, out )
 		out.close
 	}
 	
-	def write( m: Map[String, Any] )
-	{
+	def write( m: Map[String, Any] ) {
 		write( m, Console.out, true )
 	}
 
-	def write( m: Map[String, Any], out: OutputStream, nl: Boolean = false )
-	{
-		Console.withOut( new PrintStream(out, true, "UTF-8") )	// force JSON encoding to be UTF-8
-		{
+	def write( m: Map[String, Any], out: OutputStream, nl: Boolean = false ) {
+		Console.withOut( new PrintStream(out, true, "UTF-8") ) {
 			def scope( level: Int ) = print( " "*(level*indent) )
 			
-			def writeMap( level: Int, m: Map[String, Any] )
-			{
+			def writeMap( level: Int, m: Map[String, Any] ) {
 				if (m.isEmpty)
 					print( "{}" )
-				else
-				{
-					def writeString( s: String )
-					{
+				else {
+					def writeString( s: String ) {
 						print( '"' )
 						
 						for (ch <- s)
-							escaped.get( ch ) match
-							{
+							escaped.get( ch ) match {
 								case None => print( ch )
 								case Some( e ) => print( e )
 							}
@@ -78,8 +66,7 @@ class JSONWriter( indent: Int )
 					}
 				
 					def writeValue( level: Int, v: Any ): Unit =
-						v match
-						{
+						v match {
 							case s: String => writeString( s )
 							case m: Map[String, Any] => writeMap( level, m )
 							case s: Seq[Any] =>
@@ -87,13 +74,11 @@ class JSONWriter( indent: Int )
 								
 								if (l isEmpty)
 									print( "[]" )
-								else
-								{
+								else {
 									println( '[' )
 									
 									def members( l: List[Any] ): Unit =
-										l match
-										{
+										l match {
 											case e :: Nil =>
 												scope( level + 1 )
 												writeValue( level + 1, e )
@@ -112,18 +97,15 @@ class JSONWriter( indent: Int )
 							case _ => print( v )
 						}
 				
-					def pair( k: String, v: Any )
-					{
+					def pair( k: String, v: Any ) {
 						scope( level + 1 )
 						writeString( k )
 						print( ": " )
 						writeValue( level + 1, v )
 					}
 					
-					def pairs( l: List[(String, Any)] )
-					{
-						l match
-						{
+					def pairs( l: List[(String, Any)] ) {
+						l match {
 							case (k, v) :: Nil => pair( k, v )
 							case (k, v) :: tail =>
 								pair( k, v )
