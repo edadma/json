@@ -2,8 +2,7 @@ package xyz.hyperreal.json
 
 import java.io.File
 import collection.mutable.ListBuffer
-import collection.immutable.PagedSeq
-import util.parsing.input.{Reader, CharSequenceReader, PagedSeqReader}
+import util.parsing.input.{PagedSeq, Reader, CharSequenceReader, PagedSeqReader}
 
 
 object DefaultJSONReader
