@@ -5,6 +5,18 @@ import collection.mutable.ListBuffer
 import util.parsing.input.{PagedSeq, Reader, CharSequenceReader, PagedSeqReader}
 
 
+object DecimalJSONReader {
+  private val reader = new JSONReader( 'bigDecs )
+
+  def fromString( s: String ) = reader.fromString( s )
+
+  def fromReader( r: Reader[Char] ) = reader.fromReader( r )
+
+  def fromFile( s: String ) = reader.fromFile( s )
+
+  def fromFile( s: File ) = reader.fromFile( s )
+}
+
 object DefaultJSONReader {
 	private val default = new JSONReader( 'ints )
 	
@@ -59,7 +71,8 @@ class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
 class JSONReader( types: Symbol* ) {
 	private val ints = types contains 'ints
 	private val bigInts = types contains 'bigInts
-	
+	private val bigDecs = types contains 'bigDecs
+
 	def fromString( s: String ): JSON = fromReader( new CharSequenceReader(s) )
 	
 	def fromReader( r: Reader[Char] ): JSON = {
@@ -186,7 +199,7 @@ class JSONReader( types: Symbol* ) {
 		if (!NUMBER.matcher( n ).matches) error( "invalid number", r )
 		
 		if (n.indexOf( '.' ) > -1 || n.indexOf( 'e' ) > -1 || n.indexOf( 'E' ) > -1)
-			(r1, n.toDouble)
+			(r1, if (bigDecs) BigDecimal( n ) else n.toDouble)
 		else {
 	  	val num = BigInt( n )
 		
@@ -195,7 +208,7 @@ class JSONReader( types: Symbol* ) {
 			else if (bigInts)
 				(r1, num)
 			else
-				(r1, n.toDouble)
+				(r1, if (bigDecs) BigDecimal( n ) else n.toDouble)
 		}
 	}
 

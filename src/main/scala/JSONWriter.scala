@@ -68,7 +68,7 @@ class JSONWriter( indent: Int ) {
 					def writeValue( level: Int, v: Any ): Unit =
 						v match {
 							case s: String => writeString( s )
-							case m: Map[String, Any] => writeMap( level, m )
+							case m: Map[_, _] => writeMap( level, m.asInstanceOf[Map[String, Any]] )
 							case s: Seq[Any] =>
 								val l = s.toList
 								
@@ -79,6 +79,7 @@ class JSONWriter( indent: Int ) {
 									
 									def members( l: List[Any] ): Unit =
 										l match {
+                      case Nil =>
 											case e :: Nil =>
 												scope( level + 1 )
 												writeValue( level + 1, e )
@@ -106,6 +107,7 @@ class JSONWriter( indent: Int ) {
 					
 					def pairs( l: List[(String, Any)] ) {
 						l match {
+              case Nil =>
 							case (k, v) :: Nil => pair( k, v )
 							case (k, v) :: tail =>
 								pair( k, v )
