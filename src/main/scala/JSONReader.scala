@@ -15,6 +15,8 @@ object DecimalJSONReader {
   def fromFile( s: String ) = reader.fromFile( s )
 
   def fromFile( s: File ) = reader.fromFile( s )
+
+  def fromSource( s: io.Source ) = reader.fromSource( s )
 }
 
 object DefaultJSONReader {
@@ -27,6 +29,8 @@ object DefaultJSONReader {
 	def fromFile( s: String ) = default.fromFile( s )
 
 	def fromFile( s: File ) = default.fromFile( s )
+
+  def fromSource( s: io.Source ) = default.fromSource( s )
 }
 
 class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
@@ -84,10 +88,13 @@ class JSONReader( types: Symbol* ) {
 		obj
 	}
 
+	def fromSource( s: io.Source ) = fromReader( new PagedSeqReader(PagedSeq.fromSource(s)) )
+
 	def fromFile( s: String ) = fromReader( new PagedSeqReader(PagedSeq.fromFile(s)) )
 
 	def fromFile( s: File ) = fromReader( new PagedSeqReader(PagedSeq.fromFile(s)) )
-	
+
+
 	def error( msg: String, r: Reader[Char] ): Nothing = sys.error( msg + " at " + r.pos + "\n" + r.pos.longString )
 	
 	def space( r: Reader[Char], e: String = "unexpected end of input" ): Reader[Char] =
