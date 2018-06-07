@@ -233,7 +233,7 @@ class JSONReader( types: Symbol* ) {
 						error( "unexpected end of input after escape character", r.rest )
 					else if (r.rest.first == 'u') {
 				  	var r1 = r.rest.rest
-				  	val ch = Array[Char]( 4 )
+				  	val ch = new Array[Char]( 4 )
 						
 						for (i <- 0 until 4)
 							if (r1.atEnd)
@@ -243,8 +243,8 @@ class JSONReader( types: Symbol* ) {
 							
 								if ("0123456789abcdef".indexOf( c ) == -1)
 									error( "invalid character code", r1 )
-									
-								ch(i) = c
+
+                ch(i) = c
 								r1 = r1.rest
 							}
 							
