@@ -2,7 +2,9 @@ package xyz.hyperreal.json
 
 
 object Main extends App {
-	
-  println( DefaultJSONWriter.toString( new JSONReader('ints).fromFile("json").asInstanceOf[JSON] ) )
+
+  val l = new JSONReader('ints).fromFile("json").asInstanceOf[List[Map[String, Any]]]
+
+  println( DefaultJSONWriter.toString( l filter (_("section") == "Thematic breaks") ) )
 
 }
