@@ -77,10 +77,10 @@ class JSONReader( types: Symbol* ) {
 	private val bigInts = types contains 'bigInts
 	private val bigDecs = types contains 'bigDecs
 
-	def fromString( s: String ): JSON = fromReader( new CharSequenceReader(s) )
+	def fromString( s: String ) = fromReader( new CharSequenceReader(s) )
 	
-	def fromReader( r: Reader[Char] ): JSON = {
-	val (rest, obj) = dictionary( space(r) )
+	def fromReader( r: Reader[Char] ) = {
+	val (rest, obj) = value( space(r) )
 	val r1 = skipSpace( rest )
 	
 		if (!r1.atEnd) error( "expected end of input", r1 )
