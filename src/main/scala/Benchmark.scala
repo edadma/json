@@ -10,21 +10,21 @@ object Benchmark extends App {
 	
 	def start( msg: String ) = {
 		print( msg )
-		Platform.collectGarbage
-		Platform.collectGarbage
-		_start = Platform.currentTime
+		System.gc
+		System.gc
+		_start = System.currentTimeMillis
 	}
 	
 	def time = {
-		val res = (Platform.currentTime - _start).toDouble
+		val res = (System.currentTimeMillis - _start).toDouble
 		
-		println( (Platform.currentTime - _start) + "ms" )
+		println( s"${System.currentTimeMillis - _start}ms" )
 		res
 	}
 	
 	val RUNS = 3
 	
-	def test( msg: String )( activity: => Unit ) {
+	def test( msg: String )( activity: => Unit ) = {
 		var total = 0.0
 		
 		for (i <- 0 to RUNS) {

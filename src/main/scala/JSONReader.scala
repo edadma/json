@@ -6,7 +6,7 @@ import util.parsing.input.{PagedSeq, Reader, CharSequenceReader, PagedSeqReader}
 
 
 object DecimalJSONReader {
-  private val reader = new JSONReader( 'bigDecs )
+  private val reader = new JSONReader( bigDecs = true )
 
   def fromString( s: String ) = reader.fromString( s )
 
@@ -20,7 +20,7 @@ object DecimalJSONReader {
 }
 
 object DefaultJSONReader {
-	private val default = new JSONReader( 'ints )
+	private val default = new JSONReader( ints = true )
 	
 	def fromString( s: String ) = default.fromString( s )
 	
@@ -41,9 +41,13 @@ class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
 	
 	def iterator = m.iterator
 	
-	def +[V1 >: Any]( kv: (String, V1) ) = m + kv
+    def removed( key: String ) = m removed key
+
+    def updated[V1 >: Any]( key: String, value: V1 ) = m.updated( key, value )
+
+	//override def +[V1 >: Any]( kv: (String, V1) ) = m + kv
 	
-	def -( key: String ) = m - key
+	//def -( key: String ) = m - key
 	
 	def getMap( key: String ) = m( key ).asInstanceOf[JSON]
 	
@@ -72,10 +76,7 @@ class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
 	override def toString = m mkString ("{", ",", "}")
 }
 
-class JSONReader( types: Symbol* ) {
-	private val ints = types contains 'ints
-	private val bigInts = types contains 'bigInts
-	private val bigDecs = types contains 'bigDecs
+class JSONReader( ints: Boolean = false, bigInts: Boolean = false, bigDecs: Boolean = false ) {
 
 	def fromString( s: String ) = fromReader( new CharSequenceReader(s) )
 	

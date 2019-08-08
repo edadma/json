@@ -27,14 +27,14 @@ class JSONWriter( indent: Int ) {
 		new String( bytes.toByteArray, "UTF-8" )
 	}
 	
-	def write( v: Any, file: File ) {
+	def write( v: Any, file: File ): Unit = {
 	  val out = new FileOutputStream( file )
 	
 		write( v, out )
 		out.close
 	}
 	
-	def write( v: Any, file: String ){
+	def write( v: Any, file: String ): Unit = {
 	  val out = new FileOutputStream( file )
 	
 		write( v, out )
@@ -43,7 +43,7 @@ class JSONWriter( indent: Int ) {
 	
 	def write( v: Any ): Unit = write( v, Console.out, true )
 
-	def write( v: Any, out: OutputStream, nl: Boolean = false ) {
+	def write( v: Any, out: OutputStream, nl: Boolean = false ): Unit = {
 		Console.withOut( new PrintStream(out, true, "UTF-8") ) {
 			def scope( level: Int ) = print( " "*(level*indent) )
 
@@ -80,7 +80,7 @@ class JSONWriter( indent: Int ) {
 					case _ => print( v )
 				}
 
-			def writeString( s: String ) {
+			def writeString( s: String ) = {
 				print( '"' )
 
 				for (ch <- s)
@@ -92,18 +92,18 @@ class JSONWriter( indent: Int ) {
 				print( '"' )
 			}
 
-			def writeMap( level: Int, m: Map[String, Any] ) {
+			def writeMap( level: Int, m: Map[String, Any] ) = {
 				if (m.isEmpty)
 					print( "{}" )
 				else {
-					def pair( k: String, v: Any ) {
+					def pair( k: String, v: Any ) = {
 						scope( level + 1 )
 						writeString( k )
 						print( ": " )
 						writeValue( level + 1, v )
 					}
 					
-					def pairs( l: List[(String, Any)] ) {
+					def pairs( l: List[(String, Any)] ): Unit = {
 						l match {
               case Nil =>
 							case (k, v) :: Nil => pair( k, v )

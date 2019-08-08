@@ -3,19 +3,19 @@ package xyz.hyperreal.json
 import java.{lang => jl}
 
 import org.scalatest._
-import prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 
-class JSONTest extends FreeSpec with PropertyChecks with Matchers
+class JSONTest extends FreeSpec with ScalaCheckPropertyChecks with Matchers
 {
 	"reading" in
 	{
-		new JSONReader( 'ints, 'bigInts ).fromString("""{"a": 3123123123}""").asInstanceOf[JSON].m shouldBe Map( "a" -> BigInt("3123123123") )
+		new JSONReader( ints = true, bigInts = true ).fromString("""{"a": 3123123123}""").asInstanceOf[JSON].m shouldBe Map( "a" -> BigInt("3123123123") )
 		DefaultJSONReader.fromString("""{"a": 1.5}""").asInstanceOf[JSON].m shouldBe Map( "a" -> 1.5 )
 		DefaultJSONReader.fromString("""{"a": 123}""").asInstanceOf[JSON].m shouldBe Map( "a" -> 123 )
 		DefaultJSONReader.fromString("""{a: 123}""").asInstanceOf[JSON].m shouldBe Map( "a" -> 123 )
 		DefaultJSONReader.fromString("""{"a": 123}""").asInstanceOf[JSON]("a") should (be (123) and be (a [jl.Integer]))
-		new JSONReader( 'ints ).fromString("""{"a": 123}""").asInstanceOf[JSON]("a") should (be (123) and be (a [jl.Integer]))
+		new JSONReader( ints = true ).fromString("""{"a": 123}""").asInstanceOf[JSON]("a") should (be (123) and be (a [jl.Integer]))
 		DefaultJSONReader.fromString("""{"a": [1, 2]}""").asInstanceOf[JSON].m shouldBe Map( "a" -> List(1, 2) )
 		DefaultJSONReader.fromString(" \n{ \n} \n").asInstanceOf[JSON].m shouldBe Map()
 		DefaultJSONReader.fromString("""{"a": null}""").asInstanceOf[JSON].m shouldBe Map( "a" -> null )
