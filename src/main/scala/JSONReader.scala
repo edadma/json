@@ -1,22 +1,16 @@
 package xyz.hyperreal.json
 
-import java.io.File
 import collection.mutable.ListBuffer
-import util.parsing.input.{PagedSeq, Reader, CharSequenceReader, PagedSeqReader}
-
+import xyz.hyperreal.char_reader.CharReader
 
 object DecimalJSONReader {
   private val reader = new JSONReader( bigDecs = true )
 
   def fromString( s: String ) = reader.fromString( s )
 
-  def fromReader( r: Reader[Char] ) = reader.fromReader( r )
+  def fromReader( r: CharReader ) = reader.fromReader( r )
 
   def fromFile( s: String ) = reader.fromFile( s )
-
-  def fromFile( s: File ) = reader.fromFile( s )
-
-  def fromSource( s: io.Source ) = reader.fromSource( s )
 }
 
 object DefaultJSONReader {
@@ -24,13 +18,9 @@ object DefaultJSONReader {
 	
 	def fromString( s: String ) = default.fromString( s )
 	
-	def fromReader( r: Reader[Char] ) = default.fromReader( r )
+	def fromReader( r: CharReader ) = default.fromReader( r )
 
 	def fromFile( s: String ) = default.fromFile( s )
-
-	def fromFile( s: File ) = default.fromFile( s )
-
-  def fromSource( s: io.Source ) = default.fromSource( s )
 }
 
 class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
@@ -78,63 +68,58 @@ class JSON( val m: Map[String, Any] ) extends Map[String, Any] {
 
 class JSONReader( ints: Boolean = false, bigInts: Boolean = false, bigDecs: Boolean = false ) {
 
-	def fromString( s: String ) = fromReader( new CharSequenceReader(s) )
+	def fromString( s: String ) = CharReader.fromString( s)
 	
-	def fromReader( r: Reader[Char] ) = {
+	def fromReader( r: CharReader ) = {
 	val (rest, obj) = value( space(r) )
 	val r1 = skipSpace( rest )
 	
-		if (!r1.atEnd) error( "expected end of input", r1 )
+		if (!r1.eoi) error( "expected end of input", r1 )
 
 		obj
 	}
 
-	def fromSource( s: io.Source ) = fromReader( new PagedSeqReader(PagedSeq.fromSource(s)) )
+	def fromFile( s: String ) = CharReader.fromFile(s)
 
-	def fromFile( s: String ) = fromReader( new PagedSeqReader(PagedSeq.fromFile(s)) )
-
-	def fromFile( s: File ) = fromReader( new PagedSeqReader(PagedSeq.fromFile(s)) )
-
-
-	def error( msg: String, r: Reader[Char] ): Nothing = sys.error( msg + " at " + r.pos + "\n" + r.pos.longString )
+	def error( msg: String, r: CharReader ): Nothing = r.error( msg )
 	
-	def space( r: Reader[Char], e: String = "unexpected end of input" ): Reader[Char] =
+	def space( r: CharReader, e: String = "unexpected end of input" ): CharReader =
 		skipSpace( r ) match {
-			case rest if rest.atEnd => error( e, r )
+			case rest if rest.eoi => error( e, r )
 			case rest => rest
 		}
 	
-	def skipSpace( r: Reader[Char] ): Reader[Char] =
-		if (!r.atEnd && r.first.isWhitespace)
-			skipSpace( r.rest )
+	def skipSpace( r: CharReader ): CharReader =
+		if (!r.eoi && r.ch.isWhitespace)
+			skipSpace( r.next )
 		else
 			r
 
-	def dictionary( r: Reader[Char] ): (Reader[Char], JSON) =
-		if (r.first == '{') {
-		  val r1 = space( r.rest )
+	def dictionary( r: CharReader ): (CharReader, JSON) =
+		if (r.ch == '{') {
+		  val r1 = space( r.next )
 		
-			if (r1.first == '}')
-				(r1.rest, new JSON( Map[String, Any]() ))
+			if (r1.ch == '}')
+				(r1.next, new JSON( Map[String, Any]() ))
 			else
 				members( r1, Map[String, Any]() )
 		} else
 			error( "expected '{'", r )
 		
-	def members( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], JSON) = {
+	def members( r: CharReader, m: Map[String, Any] ): (CharReader, JSON) = {
   	val (r1, map) = pair( r, m )
 	  val r2 = space( r1, "',' or '}' was expected" )
 		
-		r2.first match {
-			case ',' => members( space(r2.rest, "string was expected"), map )
-			case '}' => (r2.rest, new JSON( map ))
+		r2.ch match {
+			case ',' => members( space(r2.next, "string was expected"), map )
+			case '}' => (r2.next, new JSON( map ))
 			case _ => error( "expected ',' or '}'", r2 )
 		}
 	}
 	
-	def pair( r: Reader[Char], m: Map[String, Any] ): (Reader[Char], Map[String, Any]) = {
+	def pair( r: CharReader, m: Map[String, Any] ): (CharReader, Map[String, Any]) = {
 	  val (r1, k) =
-      if (r.first == '"')
+      if (r.ch == '"')
         string( r )
       else
         ident( r )
@@ -144,28 +129,28 @@ class JSONReader( ints: Boolean = false, bigInts: Boolean = false, bigDecs: Bool
 		(r2, m + (k -> v))
 	}
 	
-	def array( r: Reader[Char] ): (Reader[Char], List[Any]) =
-		if (r.first == ']')
-			(r.rest, Nil)
+	def array( r: CharReader ): (CharReader, List[Any]) =
+		if (r.ch == ']')
+			(r.next, Nil)
 		else
 			elements( r, new ListBuffer[Any] )
 
-	def elements( r: Reader[Char], buf: ListBuffer[Any] ): (Reader[Char], List[Any]) = {
+	def elements( r: CharReader, buf: ListBuffer[Any] ): (CharReader, List[Any]) = {
     val (r1, v) = value( space(r) )
     val r2 = space( r1, "',' or ']' was expected" )
 	
 		buf += v
 		
-		r2.first match {
-			case ',' => elements( space(r2.rest), buf )
-			case ']' => (r2.rest, buf.toList)
+		r2.ch match {
+			case ',' => elements( space(r2.next), buf )
+			case ']' => (r2.next, buf.toList)
 			case _ => error( "expected ',' or ']'", r2 )
 		}
 	}
 
-	def value( r: Reader[Char] ): (Reader[Char], Any) =
-		r.first match {
-			case '[' => array( space(r.rest) )
+	def value( r: CharReader ): (CharReader, Any) =
+		r.ch match {
+			case '[' => array( space(r.next) )
 			case '{' => dictionary( r )
  			case '"' => string( r )
  			case f if f.isDigit || f == '-' => number( r )
@@ -178,26 +163,26 @@ class JSONReader( ints: Boolean = false, bigInts: Boolean = false, bigDecs: Bool
 	private val NUMBER = """-?(?:0|[1-9]\d*)(?:\.\d*)?(?:(?:e|E)(?:\+|-|)\d+)?""".r.pattern
 	private val IDENT_CHAR = ('0' to '9') ++ ('a' to 'z') ++ ('A' to 'Z') :+ '_' :+ '-' toSet
 	
-	def ident( r: Reader[Char] ): (Reader[Char], String) = {
+	def ident( r: CharReader ): (CharReader, String) = {
   	val buf = new StringBuilder
 		
-		def read( r: Reader[Char] ): Reader[Char] =
-			if (!r.atEnd && IDENT_CHAR( r.first )) {
-				buf append r.first
-				read( r.rest )
+		def read( r: CharReader ): CharReader =
+			if (!r.eoi && IDENT_CHAR( r.ch )) {
+				buf append r.ch
+				read( r.next )
 			} else
 				r
 		
 		(read( r ), buf.toString)
 	}
 	
-	def number( r: Reader[Char] ): (Reader[Char], Number) = {
+	def number( r: CharReader ): (CharReader, Number) = {
 	  val buf = new StringBuilder
 		
-		def read( r: Reader[Char] ): Reader[Char] =
-			if (!r.atEnd && "+-0123456789eE.".indexOf( r.first ) > -1) {
-				buf append r.first
-				read( r.rest )
+		def read( r: CharReader ): CharReader =
+			if (!r.eoi && "+-0123456789eE.".indexOf( r.ch ) > -1) {
+				buf append r.ch
+				read( r.next )
 			} else
 				r
 		
@@ -220,40 +205,40 @@ class JSONReader( ints: Boolean = false, bigInts: Boolean = false, bigDecs: Bool
 		}
 	}
 
-	def string( r: Reader[Char] ): (Reader[Char], String) =
-		if (r.first != '"')
+	def string( r: CharReader ): (CharReader, String) =
+		if (r.ch != '"')
 			error( "expected '\"'", r )
 		else {
 		  val buf = new StringBuilder
 		
-			def read( r: Reader[Char] ): Reader[Char] =
-				if (r.atEnd)
+			def read( r: CharReader ): CharReader =
+				if (r.eoi)
 					error( "unclosed string", r )
-				else if (r.first == '\\')
-					if (r.rest.atEnd)
-						error( "unexpected end of input after escape character", r.rest )
-					else if (r.rest.first == 'u') {
-				  	var r1 = r.rest.rest
+				else if (r.ch == '\\')
+					if (r.next.eoi)
+						error( "unexpected end of input after escape character", r.next )
+					else if (r.next.ch == 'u') {
+				  	var r1 = r.next.next
 				  	val ch = new Array[Char]( 4 )
 						
 						for (i <- 0 until 4)
-							if (r1.atEnd)
-								error( "unexpected end of input within character code", r.rest )
+							if (r1.eoi)
+								error( "unexpected end of input within character code", r.next )
 							else {
-						  	val c = Character.toLowerCase( r1.first )
+						  	val c = Character.toLowerCase( r1.ch )
 							
 								if ("0123456789abcdef".indexOf( c ) == -1)
 									error( "invalid character code", r1 )
 
                 ch(i) = c
-								r1 = r1.rest
+								r1 = r1.next
 							}
 							
 						buf += Integer.parseInt( ch mkString "", 16 ).toChar
 						read( r1 )
 					} else {
 						buf +=
-							(r.rest.first match
+							(r.next.ch match
 							{
 								case '"' => '"'
 								case '\\' => '\\'
@@ -263,28 +248,28 @@ class JSONReader( ints: Boolean = false, bigInts: Boolean = false, bigDecs: Bool
 								case 'n' => '\n'
 								case 'r' => '\r'
 								case 't' => '\t'
-								case c => error( "illegal escape character '" + c + "'", r.rest )
+								case c => error( "illegal escape character '" + c + "'", r.next )
 							})
 
-						read( r.rest.rest )
-					} else if (r.first == '"')
-            r.rest
+						read( r.next.next )
+					} else if (r.ch == '"')
+            r.next
 				else {
-					buf += r.first
-					read( r.rest )
+					buf += r.ch
+					read( r.next )
 				}
 			
-			(read( r.rest ), buf.toString)
+			(read( r.next ), buf.toString)
 		}
 	
-	def matches( r: Reader[Char], s: String ): Reader[Char] = {
+	def matches( r: CharReader, s: String ): CharReader = {
 	  val len = s.length
 	
-		def matches( _r: Reader[Char], index: Int ): Reader[Char] =
+		def matches( _r: CharReader, index: Int ): CharReader =
 			if (index == len)
 				_r
-			else if (!_r.atEnd && _r.first ==  s.charAt( index ))
-				matches( _r.rest, index + 1 )
+			else if (!_r.eoi && _r.ch ==  s.charAt( index ))
+				matches( _r.next, index + 1 )
 			else
 				error( "failed to match '" + s, _r )
 				

@@ -1,8 +1,10 @@
 name := "json"
 
-version := "0.8.0"
+version := "0.8.2"
 
-scalaVersion := "2.13.0"
+scalaVersion := "2.13.4"
+
+//crossScalaVersions := Seq("2.12.11")
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
@@ -10,7 +12,7 @@ organization := "xyz.hyperreal"
 
 //resolvers += Resolver.sonatypeRepo( "snapshots" )
 
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
 
 resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
@@ -20,8 +22,7 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-	"org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
-//	"org.scala-lang.modules" %% "scala-swing" % "2.0.0-M2"
+  "xyz.hyperreal" %% "char-reader" % "0.1.6"
 )
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + name.value.replace('-', '_') + ".Main" )
