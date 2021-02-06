@@ -2,14 +2,11 @@ package xyz.hyperreal.json
 
 import java.{lang => jl}
 
-import org.scalatest._
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-
-class JSONTest extends FreeSpec with ScalaCheckPropertyChecks with Matchers
-{
-	"reading" in
-	{
+class JSONTest extends AnyFreeSpec with Matchers {
+	"reading" in {
 		new JSONReader( ints = true, bigInts = true ).fromString("""{"a": 3123123123}""").asInstanceOf[JSON].m shouldBe Map( "a" -> BigInt("3123123123") )
 		DefaultJSONReader.fromString("""{"a": 1.5}""").asInstanceOf[JSON].m shouldBe Map( "a" -> 1.5 )
 		DefaultJSONReader.fromString("""{"a": 123}""").asInstanceOf[JSON].m shouldBe Map( "a" -> 123 )

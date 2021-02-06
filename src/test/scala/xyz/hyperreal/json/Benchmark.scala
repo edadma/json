@@ -1,9 +1,9 @@
-import xyz.hyperreal.json.DefaultJSONReader
+package xyz.hyperreal.json
 
 import java.io.{File, PrintWriter}
 import scala.io.Source
 
-object Benchmark extends App {
+object Benchmark /*extends App*/ {
   var _start: Long = _
 
   def start(msg: String) = {
@@ -46,7 +46,8 @@ object Benchmark extends App {
     val out = new PrintWriter(file)
 
     for (_ <- 1 to 91582)
-      out.println("""{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false, "h": [{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true,"g":false}],"i":1}""")
+      out.println(
+        """{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false, "h": [{"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true, "g": false}, {"a": 123, "b": "asdf", "c": [], "d": {}, "e": null, "f": true,"g":false}],"i":1}""")
 
     out.close
   }
