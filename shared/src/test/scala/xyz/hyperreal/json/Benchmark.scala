@@ -53,10 +53,10 @@ object Benchmark /*extends App*/ {
   }
 
   test("Base line") {
-    Source.fromFile(file).getLines.length
+    util.Using(Source.fromFile(file))(_.getLines()).get.length
   }
 
   test("JSON reader") {
-    Source.fromFile(file).getLines foreach DefaultJSONReader.fromString
+    util.Using(Source.fromFile(file))(_.getLines()).get foreach DefaultJSONReader.fromString
   }
 }

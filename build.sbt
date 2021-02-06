@@ -1,46 +1,37 @@
-name := "json"
-
-version := "0.8.2"
-
-scalaVersion := "2.13.4"
-
-scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
-
-organization := "xyz.hyperreal"
-
-resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
-
-resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
-
-libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.3" % "test",
-)
-
-libraryDependencies ++= Seq(
-  "xyz.hyperreal" %% "char-reader" % "0.1.6"
-)
-
-mainClass in (Compile, run) := Some( "xyz.hyperreal." + name.value.replace('-', '_') + ".Main" )
-
-publishMavenStyle := true
-
-publishArtifact in Test := false
-
-pomIncludeRepository := { _ => false }
-
-licenses := Seq("ISC" -> url("https://opensource.org/licenses/ISC"))
-
-homepage := Some(url("https://github.com/edadma/" + name.value))
-
-pomExtra :=
-  <scm>
-    <url>git@github.com:edadma/{name.value}.git</url>
-    <connection>scm:git:git@github.com:edadma/{name.value}.git</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>edadma</id>
-      <name>Edward A. Maxedon, Sr.</name>
-      <url>https://github.com/edadma</url>
-    </developer>
-  </developers>
+lazy val json = crossProject(JSPlatform, JVMPlatform/*, NativePlatform*/)/*.crossType(CrossType.Pure)*/.in(file(".")).
+  settings(
+    name := "json",
+    version := "0.8.3",
+    scalaVersion := "2.13.4",
+    scalacOptions ++=
+      Seq(
+        "-deprecation", "-feature", "-unchecked",
+        "-language:postfixOps", "-language:implicitConversions", "-language:existentials", "-language:dynamics",
+        "-Xasync"
+      ),
+    organization := "xyz.hyperreal",
+    resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven",
+    mainClass := Some("xyz.hyperreal.json.Main"),
+    libraryDependencies ++=
+      Seq(
+        "xyz.hyperreal" %%% "char-reader" % "0.1.8"
+      ),
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.3" % "test",
+    publishMavenStyle := true,
+    publishArtifact in Test := false,
+    licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
+  ).
+  jvmSettings(
+    libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.0.0" % "provided",
+  ).
+  //  nativeSettings(
+  //    nativeLinkStubs := true
+  //  ).
+  jsSettings(
+    jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
+    //    Test / scalaJSUseMainModuleInitializer := true,
+    //    Test / scalaJSUseTestModuleInitializer := false,
+    Test / scalaJSUseMainModuleInitializer := false,
+    Test / scalaJSUseTestModuleInitializer := true,
+    scalaJSUseMainModuleInitializer := true,
+  )
