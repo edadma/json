@@ -166,7 +166,7 @@ class JSONReader(ints: Boolean = false,
     }
 
   private val NUMBER =
-    """-?(?:0|[1-9]\d*)(?:\.\d*)?(?:(?:e|E)(?:\+|-|)\d+)?""".r.pattern
+    """-?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE](?:\+|-|)\d+)?""".r.pattern
   private val IDENT_CHAR =
     ('0' to '9') ++ ('a' to 'z') ++ ('A' to 'Z') :+ '_' :+ '-' toSet
 
