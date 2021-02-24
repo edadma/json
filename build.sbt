@@ -1,8 +1,8 @@
-lazy val json = crossProject(JSPlatform, JVMPlatform/*, NativePlatform*/)/*.crossType(CrossType.Pure)*/.in(file(".")).
+lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".")).
   settings(
     name := "json",
     version := "0.8.3",
-    scalaVersion := "2.13.4",
+    scalaVersion := "2.13.5",
     scalacOptions ++=
       Seq(
         "-deprecation", "-feature", "-unchecked",
@@ -16,7 +16,7 @@ lazy val json = crossProject(JSPlatform, JVMPlatform/*, NativePlatform*/)/*.cros
       Seq(
         "xyz.hyperreal" %%% "char-reader" % "0.1.9"
       ),
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.3" % "test",
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.5" % "test",
     publishMavenStyle := true,
     publishArtifact in Test := false,
     licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
@@ -24,9 +24,9 @@ lazy val json = crossProject(JSPlatform, JVMPlatform/*, NativePlatform*/)/*.cros
   jvmSettings(
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.0.0" % "provided",
   ).
-  //  nativeSettings(
-  //    nativeLinkStubs := true
-  //  ).
+  nativeSettings(
+    nativeLinkStubs := true
+  ).
   jsSettings(
     jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
 //    Test / scalaJSUseMainModuleInitializer := true,
