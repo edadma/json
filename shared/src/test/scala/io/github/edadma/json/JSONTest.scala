@@ -1,4 +1,4 @@
-package xyz.hyperreal.json
+package io.github.edadma.json
 
 import java.{lang => jl}
 

@@ -1,7 +1,9 @@
-package xyz.hyperreal.json
+package io.github.edadma.json
 
 import collection.mutable.ListBuffer
-import xyz.hyperreal.char_reader.CharReader
+import io.github.edadma.char_reader.CharReader
+
+import scala.language.postfixOps
 
 object DecimalJSONReader {
   private val reader = new JSONReader(bigDecs = true)

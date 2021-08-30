@@ -1,24 +1,28 @@
+ThisBuild / licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
+ThisBuild / versionScheme := Some("semver-spec")
+
 lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".")).
   settings(
     name := "json",
-    version := "0.8.3",
-    scalaVersion := "2.13.5",
+    version := "0.1.0",
+    scalaVersion := "2.13.6",
     scalacOptions ++=
       Seq(
         "-deprecation", "-feature", "-unchecked",
         "-language:postfixOps", "-language:implicitConversions", "-language:existentials", "-language:dynamics",
         "-Xasync"
       ),
-    organization := "xyz.hyperreal",
-    resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven",
-    mainClass := Some("xyz.hyperreal.json.Main"),
+    organization := "io.github.edadma",
+    githubOwner := "edadma",
+    githubRepository := name.value,
+    mainClass := Some(s"${organization.value}.${name.value}.Main"),
     libraryDependencies ++=
       Seq(
-        "xyz.hyperreal" %%% "char-reader" % "0.1.9"
+        "io.github.edadma" %%% "char-reader" % "0.1.2"
       ),
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.5" % "test",
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.9" % "test",
     publishMavenStyle := true,
-    publishArtifact in Test := false,
+    Test / publishArtifact := false,
     licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
   ).
   jvmSettings(
