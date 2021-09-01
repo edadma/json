@@ -9,6 +9,12 @@ class Obj private (val m: Map[String, Any]) extends Map[String, Any] {
 
   private[json] var _parent: Obj = _
 
+  for (v <- m.values)
+    v match {
+      case o: Obj => o._parent = this
+      case _      =>
+    }
+
   def parent: Obj = _parent
 
   def get(key: String): Option[Any] = m get key
@@ -19,7 +25,7 @@ class Obj private (val m: Map[String, Any]) extends Map[String, Any] {
 
   def updated[V1 >: Any](key: String, value: V1): Obj = new Obj(m.updated(key, value))
 
-  override def +[V1 >: Any](kv: (String, V1)) = new Obj(m + kv)
+  override def +[V1 >: Any](kv: (String, V1)): Obj = new Obj(m + kv)
 
   def getObj(key: String): Obj = m(key).asInstanceOf[Obj]
 
