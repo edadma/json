@@ -4,7 +4,7 @@ object Obj {
   def apply(elems: (String, Any)*) = new Obj(Map(elems: _*))
 }
 
-class Obj private (val m: Map[String, Any]) extends Map[String, Any] {
+class Obj private(val m: Map[String, Any]) extends Map[String, Any] {
   def this() = this(Map())
 
   private[json] var _parent: Obj = _
@@ -12,7 +12,7 @@ class Obj private (val m: Map[String, Any]) extends Map[String, Any] {
   for (v <- m.values)
     v match {
       case o: Obj => o._parent = this
-      case _      =>
+      case _ =>
     }
 
   def parent: Obj = _parent
@@ -51,5 +51,12 @@ class Obj private (val m: Map[String, Any]) extends Map[String, Any] {
 
   def getBigIntList(key: String): Seq[Any] = getList[BigInt](key)
 
-  override def toString: String = m mkString ("{", ",", "}")
+  private def render(v: Any) =
+    v match {
+      case s: String => s"\"$s\""
+      case _ => v.toString
+    }
+
+  override def toString: String = m map { case (k, v) => s"${render(k)}: ${render(v)}" } mkString("{", ", ", "}")
+
 }
