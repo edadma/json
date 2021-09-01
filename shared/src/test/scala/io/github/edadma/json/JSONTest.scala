@@ -29,7 +29,7 @@ class JSONTest extends AnyFreeSpec with Matchers with Testing {
   }
 
   "writing" in {
-    DefaultJSONWriter.toString(Object("a" -> Array(1, 2))) shouldBe
+    DefaultJSONWriter.toString(Object("a" -> Array(List(1, 2)))) shouldBe
       """	|{
           |  "a": [
           |    1,

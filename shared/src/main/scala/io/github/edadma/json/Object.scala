@@ -1,7 +1,7 @@
 package io.github.edadma.json
 
 object Object {
-  def apply(elems: (String, Any)*) = new Object(Map(elems: _*))
+  def apply(elems: (String, Any)*) = new Object(elems.toMap)
 }
 
 class Object private (val m: Map[String, Any]) extends Map[String, Any] with Aggregate {

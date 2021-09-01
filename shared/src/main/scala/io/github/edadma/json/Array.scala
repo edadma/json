@@ -1,24 +1,20 @@
 package io.github.edadma.json
 
-import scala.collection.mutable.ListBuffer
-
 object Array {
 
-  def apply(elems: ListBuffer[Any]) = new Array(elems)
+  def apply(elems: collection.Seq[Any]) = new Array(elems.toVector)
 
-  def apply(elems: Any*) = new Array(new ListBuffer[Any] ++ elems)
+  def apply() = new Array()
 
 }
 
-class Array private[json] (buf: ListBuffer[Any]) extends Seq[Any] with Aggregate {
+class Array private[json] (vector: Vector[Any]) extends Seq[Any] with Aggregate {
 
-  def this() = this(new ListBuffer[Any])
+  def this() = this(Vector())
 
   private[json] var _parent: Any = _
 
-  private val vector = buf.toVector
-
-  buf foreach {
+  vector foreach {
     case o: Object => o._parent = this
     case a: Array  => a._parent = this
     case _         =>
