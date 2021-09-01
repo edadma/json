@@ -16,13 +16,13 @@ object DecimalJSONReader {
 }
 
 object DefaultJSONReader {
-  private val default = new JSONReader(ints = true)
+  private[json] val reader = new JSONReader(ints = true)
 
-  def fromString(s: String) = default.fromString(s)
+  def fromString(s: String) = reader.fromString(s)
 
-  def fromReader(r: CharReader) = default.fromReader(r)
+  def fromReader(r: CharReader) = reader.fromReader(r)
 
-  def fromFile(s: String) = default.fromFile(s)
+  def fromFile(s: String) = reader.fromFile(s)
 }
 
 class JSONReader(
@@ -58,18 +58,18 @@ class JSONReader(
     else
       r
 
-  def dictionary(r: CharReader): (CharReader, Obj) =
+  def dictionary(r: CharReader): (CharReader, Object) =
     if (r.ch == '{') {
       val r1 = space(r.next)
 
       if (r1.ch == '}')
-        (r1.next, new Obj)
+        (r1.next, new Object)
       else
-        members(r1, new Obj)
+        members(r1, new Object)
     } else
       error("expected '{'", r)
 
-  def members(r: CharReader, obj: Obj): (CharReader, Obj) = {
+  def members(r: CharReader, obj: Object): (CharReader, Object) = {
     val (r1, newobj) = pair(r, obj)
     val r2           = space(r1, "',' or '}' was expected")
 
@@ -80,7 +80,7 @@ class JSONReader(
     }
   }
 
-  def pair(r: CharReader, obj: Obj): (CharReader, Obj) = {
+  def pair(r: CharReader, obj: Object): (CharReader, Object) = {
     val (r1, k) =
       if (r.ch == '"')
         string(r)
@@ -97,13 +97,13 @@ class JSONReader(
     (r2, obj + (k -> v))
   }
 
-  def array(r: CharReader): (CharReader, List[Any]) =
+  def array(r: CharReader): (CharReader, Array) =
     if (r.ch == ']')
-      (r.next, Nil)
+      (r.next, Array())
     else
       elements(r, new ListBuffer[Any])
 
-  def elements(r: CharReader, buf: ListBuffer[Any]): (CharReader, List[Any]) = {
+  def elements(r: CharReader, buf: ListBuffer[Any]): (CharReader, Array) = {
     val (r1, v) = value(space(r))
     val r2      = space(r1, "',' or ']' was expected")
 
@@ -111,7 +111,7 @@ class JSONReader(
 
     r2.ch match {
       case ',' => elements(space(r2.next), buf)
-      case ']' => (r2.next, buf.toList)
+      case ']' => (r2.next, Array(buf))
       case _   => error("expected ',' or ']'", r2)
     }
   }
@@ -189,7 +189,7 @@ class JSONReader(
             error("unexpected end of input after escape character", r.next)
           else if (r.next.ch == 'u') {
             var r1 = r.next.next
-            val ch = new Array[Char](4)
+            val ch = new scala.Array[Char](4)
 
             for (i <- 0 until 4)
               if (r1.eoi)
