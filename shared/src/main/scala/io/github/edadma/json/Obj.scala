@@ -1,15 +1,15 @@
 package io.github.edadma.json
 
-object Object {
-  def apply(elems: (String, Any)*) = new Object(Map(elems: _*))
+object Obj {
+  def apply(elems: (String, Any)*) = new Obj(Map(elems: _*))
 }
 
-class Object private (val m: Map[String, Any]) extends Map[String, Any] {
+class Obj private (val m: Map[String, Any]) extends Map[String, Any] {
   def this() = this(Map())
 
-  private[json] var _parent: Object = _
+  private[json] var _parent: Obj = _
 
-  def parent: Object = _parent
+  def parent: Obj = _parent
 
   def get(key: String): Option[Any] = m get key
 
@@ -17,11 +17,11 @@ class Object private (val m: Map[String, Any]) extends Map[String, Any] {
 
   def removed(key: String): Map[String, Any] = m removed key
 
-  def updated[V1 >: Any](key: String, value: V1): Object = new Object(m.updated(key, value))
+  def updated[V1 >: Any](key: String, value: V1): Obj = new Obj(m.updated(key, value))
 
-  override def +[V1 >: Any](kv: (String, V1)) = new Object(m + kv)
+  override def +[V1 >: Any](kv: (String, V1)) = new Obj(m + kv)
 
-  def getMap(key: String): Object = m(key).asInstanceOf[Object]
+  def getMap(key: String): Obj = m(key).asInstanceOf[Obj]
 
   def getBoolean(key: String): Boolean = m(key).asInstanceOf[Boolean]
 

@@ -58,18 +58,18 @@ class JSONReader(
     else
       r
 
-  def dictionary(r: CharReader): (CharReader, Object) =
+  def dictionary(r: CharReader): (CharReader, Obj) =
     if (r.ch == '{') {
       val r1 = space(r.next)
 
       if (r1.ch == '}')
-        (r1.next, new Object)
+        (r1.next, new Obj)
       else
-        members(r1, new Object)
+        members(r1, new Obj)
     } else
       error("expected '{'", r)
 
-  def members(r: CharReader, obj: Object): (CharReader, Object) = {
+  def members(r: CharReader, obj: Obj): (CharReader, Obj) = {
     val (r1, newobj) = pair(r, obj)
     val r2           = space(r1, "',' or '}' was expected")
 
@@ -80,7 +80,7 @@ class JSONReader(
     }
   }
 
-  def pair(r: CharReader, obj: Object): (CharReader, Object) = {
+  def pair(r: CharReader, obj: Obj): (CharReader, Obj) = {
     val (r1, k) =
       if (r.ch == '"')
         string(r)
@@ -95,8 +95,8 @@ class JSONReader(
     )
 
     v match {
-      case o: Object => o._parent = obj
-      case _         =>
+      case o: Obj => o._parent = obj
+      case _      =>
     }
 
     (r2, obj + (k -> v))
