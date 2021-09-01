@@ -4,7 +4,7 @@ ThisBuild / versionScheme := Some("semver-spec")
 lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".")).
   settings(
     name := "json",
-    version := "0.1.1",
+    version := "0.1.2",
     scalaVersion := "2.13.6",
     scalacOptions ++=
       Seq(
