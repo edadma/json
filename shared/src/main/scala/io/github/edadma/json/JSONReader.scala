@@ -25,58 +25,17 @@ object DefaultJSONReader {
   def fromFile(s: String) = default.fromFile(s)
 }
 
-class JSON(val m: Map[String, Any]) extends Map[String, Any] {
-
-//	def apply( key: String ) = m.apply( key )
-
-  def get(key: String) = m get key
-
-  def iterator = m.iterator
-
-  def removed(key: String) = m removed key
-
-  def updated[V1 >: Any](key: String, value: V1) = m.updated(key, value)
-
-  //override def +[V1 >: Any]( kv: (String, V1) ) = m + kv
-
-  //def -( key: String ) = m - key
-
-  def getMap(key: String) = m(key).asInstanceOf[JSON]
-
-  def getBoolean(key: String) = m(key).asInstanceOf[Boolean]
-
-  def getDouble(key: String) = m(key).asInstanceOf[Number].doubleValue
-
-  def getInt(key: String) = m(key).asInstanceOf[Int]
-
-  def getBigInt(key: String) = m(key).asInstanceOf[BigInt]
-
-  def getString(key: String) = m(key).asInstanceOf[String]
-
-  def getList[T](key: String) = m(key).asInstanceOf[List[T]]
-
-  def getBooleanList(key: String) = m(key).asInstanceOf[List[Boolean]]
-
-  def getDoubleList(key: String) = getList[Double](key)
-
-  def getIntList(key: String) = getList[Int](key)
-
-  def getStringList(key: String) = getList[String](key)
-
-  def getBigIntList(key: String) = getList[BigInt](key)
-
-  override def toString = m mkString ("{", ",", "}")
-}
-
-class JSONReader(ints: Boolean = false,
-                 bigInts: Boolean = false,
-                 bigDecs: Boolean = false) {
+class JSONReader(
+    ints: Boolean = false,
+    bigInts: Boolean = false,
+    bigDecs: Boolean = false
+) {
 
   def fromString(s: String): Any = fromReader(CharReader.fromString(s))
 
   def fromReader(r: CharReader) = {
     val (rest, obj) = value(space(r))
-    val r1 = skipSpace(rest)
+    val r1          = skipSpace(rest)
 
     if (!r1.eoi) error("expected end of input", r1)
 
@@ -99,30 +58,29 @@ class JSONReader(ints: Boolean = false,
     else
       r
 
-  def dictionary(r: CharReader): (CharReader, JSON) =
+  def dictionary(r: CharReader): (CharReader, Object) =
     if (r.ch == '{') {
       val r1 = space(r.next)
 
       if (r1.ch == '}')
-        (r1.next, new JSON(Map[String, Any]()))
+        (r1.next, new Object)
       else
-        members(r1, Map[String, Any]())
+        members(r1, new Object)
     } else
       error("expected '{'", r)
 
-  def members(r: CharReader, m: Map[String, Any]): (CharReader, JSON) = {
-    val (r1, map) = pair(r, m)
-    val r2 = space(r1, "',' or '}' was expected")
+  def members(r: CharReader, obj: Object): (CharReader, Object) = {
+    val (r1, newobj) = pair(r, obj)
+    val r2           = space(r1, "',' or '}' was expected")
 
     r2.ch match {
-      case ',' => members(space(r2.next, "string was expected"), map)
-      case '}' => (r2.next, new JSON(map))
+      case ',' => members(space(r2.next, "string was expected"), newobj)
+      case '}' => (r2.next, newobj)
       case _   => error("expected ',' or '}'", r2)
     }
   }
 
-  def pair(r: CharReader,
-           m: Map[String, Any]): (CharReader, Map[String, Any]) = {
+  def pair(r: CharReader, obj: Object): (CharReader, Object) = {
     val (r1, k) =
       if (r.ch == '"')
         string(r)
@@ -130,10 +88,18 @@ class JSONReader(ints: Boolean = false,
         ident(r)
 
     val (r2, v) = value(
-      space(matches(space(r1, "':' was expected"), ":"),
-            "JSON value was expected"))
+      space(
+        matches(space(r1, "':' was expected"), ":"),
+        "JSON value was expected"
+      )
+    )
 
-    (r2, m + (k -> v))
+    v match {
+      case o: Object => o._parent = obj
+      case _         =>
+    }
+
+    (r2, obj + (k -> v))
   }
 
   def array(r: CharReader): (CharReader, List[Any]) =
@@ -144,7 +110,7 @@ class JSONReader(ints: Boolean = false,
 
   def elements(r: CharReader, buf: ListBuffer[Any]): (CharReader, List[Any]) = {
     val (r1, v) = value(space(r))
-    val r2 = space(r1, "',' or ']' was expected")
+    val r2      = space(r1, "',' or ']' was expected")
 
     buf += v
 
@@ -196,7 +162,7 @@ class JSONReader(ints: Boolean = false,
         r
 
     val r1 = read(r)
-    val n = buf.toString
+    val n  = buf.toString
 
     if (!NUMBER.matcher(n).matches) error("invalid number", r)
 
