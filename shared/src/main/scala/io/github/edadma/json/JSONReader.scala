@@ -94,12 +94,14 @@ class JSONReader(
       )
     )
 
+    val newobj = obj + (k -> v)
+
     v match {
-      case o: Obj => o._parent = obj
+      case o: Obj => o._parent = newobj
       case _      =>
     }
 
-    (r2, obj + (k -> v))
+    (r2, newobj)
   }
 
   def array(r: CharReader): (CharReader, List[Any]) =

@@ -21,7 +21,7 @@ class Obj private (val m: Map[String, Any]) extends Map[String, Any] {
 
   override def +[V1 >: Any](kv: (String, V1)) = new Obj(m + kv)
 
-  def getMap(key: String): Obj = m(key).asInstanceOf[Obj]
+  def getObj(key: String): Obj = m(key).asInstanceOf[Obj]
 
   def getBoolean(key: String): Boolean = m(key).asInstanceOf[Boolean]
 
