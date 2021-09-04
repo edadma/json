@@ -4,7 +4,7 @@ ThisBuild / versionScheme := Some("semver-spec")
 lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".")).
   settings(
     name := "json",
-    version := "0.1.8",
+    version := "0.1.9",
     scalaVersion := "2.13.6",
     scalacOptions ++=
       Seq(
@@ -18,7 +18,7 @@ lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform).in(file(".
     mainClass := Some(s"${organization.value}.${name.value}.Main"),
     libraryDependencies ++=
       Seq(
-        "io.github.edadma" %%% "char-reader" % "0.1.2"
+        "io.github.edadma" %%% "char-reader" % "0.1.3"
       ),
     libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.9" % "test",
     publishMavenStyle := true,
