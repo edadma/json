@@ -56,7 +56,7 @@ class JSONWriter(indent: Int) {
             if (l.isEmpty)
               print("[]")
             else {
-              println('[')
+              if indent > 0 then println('[') else print('[')
 
               @tailrec
               def members(l: List[Any]): Unit =
@@ -65,11 +65,11 @@ class JSONWriter(indent: Int) {
                   case e :: Nil =>
                     scope(level + 1)
                     writeValue(level + 1, e)
-                    println()
+                    if indent > 0 then println()
                   case e :: tail =>
                     scope(level + 1)
                     writeValue(level + 1, e)
-                    println(',')
+                    if indent > 0 then println(',') else print(',')
                     members(tail)
                 }
 
@@ -77,7 +77,8 @@ class JSONWriter(indent: Int) {
               scope(level)
               print(']')
             }
-          case _ => print(v)
+          case d: Double if d.isWhole => print("%.0f" format d)
+          case _                      => print(v)
         }
 
       def writeString(s: String): Unit = {
@@ -99,7 +100,7 @@ class JSONWriter(indent: Int) {
           def pair(k: String, v: Any): Unit = {
             scope(level + 1)
             writeString(k)
-            print(": ")
+            print(if indent > 0 then ": " else ':')
             writeValue(level + 1, v)
           }
 
@@ -110,22 +111,22 @@ class JSONWriter(indent: Int) {
               case (k, v) :: Nil => pair(k, v)
               case (k, v) :: tail =>
                 pair(k, v)
-                println(",")
+                if indent > 0 then println(',') else print(',')
                 pairs(tail)
             }
           }
 
-          println("{")
+          if indent > 0 then println('{') else print('{')
           pairs(o.toList)
-          println()
+          if indent > 0 then println()
           scope(level)
-          print("}")
+          print('}')
         }
       }
 
       writeValue(0, v)
 
-      if (nl)
+      if (nl && indent > 0)
         println()
     }
   }

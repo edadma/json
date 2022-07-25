@@ -4,7 +4,7 @@ object Main extends App with Testing {
 
   val json = """{"a": 123.0}"""
 
-  println(DefaultJSONReader.fromString(json).toString)
+  println(new JSONWriter(0).toString(DefaultJSONReader.fromString(json)))
   println(test(json))
 //  println(DefaultJSONWriter.toString(json))
 

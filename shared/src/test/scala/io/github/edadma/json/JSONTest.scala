@@ -9,11 +9,10 @@ class JSONTest extends AnyFreeSpec with Matchers with Testing {
   "reading" in {
     assert(test(new JSONReader(ints = true, bigInts = true), """{"a": 3123123123}"""))
     assert(test("""{"a": 1.5}"""))
-    assert(test("""{"a": 123.0}"""))
-    DefaultJSONReader.fromString("""{a: 123}""").toString shouldBe """{"a": 123.0}"""
+    new JSONWriter(0).toString(DefaultJSONReader.fromString("""{a: 123}""")) shouldBe """{"a":123}"""
     new JSONReader(ints = true).fromString("""{"a": 123}""").asInstanceOf[Object]("a") should (be(123) and be(
       a[jl.Integer]))
-    assert(test("""{"a": [1.0, 2.0]}"""))
+    new JSONWriter(0).toString(DefaultJSONReader.fromString("""{"a": [1.0, 2.0]}""")) shouldBe """{"a":[1,2]}"""
     DefaultJSONReader.fromString(" \n{ \n} \n").toString shouldBe "{}"
     assert(test("""{"a": null}"""))
     assert(test("""{"a": true}"""))
