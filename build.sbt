@@ -7,8 +7,8 @@ lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
     name := "json",
-    version := "0.1.13",
-    scalaVersion := "3.1.3",
+    version := "0.1.14",
+    scalaVersion := "3.2.0",
     scalacOptions ++=
       Seq(
         "-deprecation",
@@ -17,7 +17,7 @@ lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         "-language:postfixOps",
         "-language:implicitConversions",
         "-language:existentials",
-        "-language:dynamics"
+        "-language:dynamics",
       ),
     organization := "io.github.edadma",
     githubOwner := "edadma",
@@ -25,18 +25,18 @@ lazy val json = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     mainClass := Some(s"${organization.value}.${name.value}.Main"),
     libraryDependencies ++=
       Seq(
-        "io.github.edadma" %%% "char-reader" % "0.1.10"
+        "io.github.edadma" %%% "char-reader" % "0.1.11",
       ),
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.12" % "test",
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.13" % "test",
     publishMavenStyle := true,
     Test / publishArtifact := false,
-    licenses += "ISC" -> url("https://opensource.org/licenses/ISC")
+    licenses += "ISC" -> url("https://opensource.org/licenses/ISC"),
   )
   .jvmSettings(
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided",
   )
   .nativeSettings(
-    nativeLinkStubs := true
+    nativeLinkStubs := true,
   )
   .jsSettings(
     jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
